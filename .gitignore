@@ -1,0 +1,8 @@
+.qodo
+.venv
+.pytest_cache
+pyproject.toml
+instance
+*/.env
+**/.env
+*/.env.*
