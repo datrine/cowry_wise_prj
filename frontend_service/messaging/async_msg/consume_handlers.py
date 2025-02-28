@@ -1,6 +1,6 @@
 import asyncio
-from admin_backend_service.messaging.consumer import consume
-from admin_backend_service.repository.user import (save_user,update_user_by_id)
+from frontend_service.messaging.consumer import consume
+from frontend_service.repository.user import (save_user,update_user_by_id)
 
 async def register_handlers():
     add_users_task=asyncio.create_task(consume(queue="queue_add_users", callback= add_user_message_handler))

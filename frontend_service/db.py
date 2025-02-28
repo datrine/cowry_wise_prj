@@ -7,9 +7,11 @@ from flask import current_app, g
 
 def init_app(app:Flask):
     app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)
+    #app.cli.add_command(init_db_command)
 
 def init_db():
+
+    #with current_app.app_context() as ctx:
     db = get_db()
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
@@ -21,8 +23,8 @@ def get_db()-> sqlite3.Connection:
             detect_types=sqlite3.PARSE_DECLTYPES
         )
         g.db.row_factory = sqlite3.Row
-
-    return g.db #sqlite3.Connection( g.db)
+        db=g.db
+    return db
 
 @click.command('init-db')
 def init_db_command():

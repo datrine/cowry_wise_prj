@@ -1,6 +1,4 @@
 import os
-#import admin_backend_service.messaging as messaging
-#from admin_backend_service. messaging.async_msg.consume_handlers import register_handlers
 
 from flask import Flask
 
@@ -16,27 +14,27 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
     
     from . import db
     with app.app_context():
         db.init_app(app)
         db.init_db()
-
-    with app.app_context():
-        from admin_backend_service.blueprints import bp_users
+        # import users blueprint
+        from frontend_service.blueprints import bp_users
         app.register_blueprint(bp_users.bp,url_prefix='/users')
 
-        # import books blueprint
-        from admin_backend_service.blueprints import bp_books
-        app.register_blueprint(bp_books.bp,url_prefix='/books')
-        
-        from admin_backend_service.blueprints import bp_borrow_list
+        # import borrow_list blueprint
+        from frontend_service.blueprints import bp_borrow_list
         app.register_blueprint(bp_borrow_list.bp,url_prefix='/borrow_list')
+        
+        # import books blueprint
+        from frontend_service.blueprints import bp_books
+        app.register_blueprint(bp_books.bp,url_prefix='/books')
+
         #messaging.init()
         #register_handlers()
-        return app
-    
-
+    return app
 
 
 def config_app(app:Flask, test_config=None):
@@ -44,8 +42,8 @@ def config_app(app:Flask, test_config=None):
         app.config.from_mapping(test_config)
         return
     else:
-        app.config["DATABASE_URL"]=os.getenv('DATABASE_URL') if os.getenv('DATABASE_URL')  else  os.path.join('dmin_backend_service.sqlite')
+        app.config["DATABASE_URL"]=os.getenv('DATABASE_URL') if os.getenv('DATABASE_URL')  else  os.path.join('frontend_service.sqlite')
         app.config["SECRET_KEY"]= os.getenv('SECRET_KEY') if os.getenv('SECRET_KEY') else'dev',
-        app.config["FRONTEND_SERVER_URL"]=os.getenv('FRONTEND_SERVER_URL') if os.getenv('FRONTEND_SERVER_URL') else "http://localhost:6000"
+        app.config["ADMIN_SERVER_URL"]=os.getenv('ADMIN_SERVER_URL') if os.getenv('ADMIN_SERVER_URL') else "http://localhost:5000"
     
     return

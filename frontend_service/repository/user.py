@@ -1,6 +1,5 @@
-from admin_backend_service.db import get_db
-from admin_backend_service.repository.util import (format_user_row,validate_user_filters,validate_user_updatable_fields)
-from typing import TypeVar, List
+from frontend_service.db import get_db
+from frontend_service.repository.util import (format_user_row,validate_user_filters,validate_user_updatable_fields)
 
 """
 save_user(email:str,firstname:str,lastname:str) -> dict:
@@ -29,7 +28,7 @@ def save_user(email:str,firstname:str,lastname:str):
     return user
 
 """
-get_users(email:str) -> List[dict]:
+get_users(filters:dict) -> List[dict]:
 get users (filterable)
 """
 def get_users(filters:dict):
@@ -58,25 +57,56 @@ def get_users(filters:dict):
             books.append(format_user_row(row))
     return books
 
+
+"""
+get_users(filters:dict) -> List[dict]:
+get users (filterable)
+"""
+def get_users_by_ids(filters:tuple):
+
+    with get_db() as db:
+        where_str= ""
+        prev=False
+        if  len(filters) > 0:
+            where_str += " WHERE "
+            for filter in filters:
+                if prev:
+                    where_str += " OR "
+                where_str += f"rowid = ? "
+                prev = True
+                
+            res = db.execute("SELECT rowid, email,firstname,lastname, role FROM users " + where_str, filters)
+        else:
+            res = db.execute("SELECT rowid, email,firstname,lastname, role FROM users")
+        rows = res.fetchall()
+        books = []
+        for row in rows:
+            books.append(format_user_row(row))
+    return books
+
+
+
+
+
 """
 get_user_by_id(id:str) -> dict:
 get user by id
 """
 def get_user_by_id(id):
-    db=get_db()
-    params=(id,)
-    res = db.execute("SELECT rowid,email,firstname,lastname,role FROM users WHERE rowid = ?",params)
-    row = res.fetchone()
-    if row is None:
-        return None
-    user = {
-        "id": row["rowid"],
-        "email": row["email"],
-        "firstname": row["firstname"],
-        "lastname": row["lastname"],
-        "role": row["role"],
-    }
-    return user
+    with get_db() as db:
+        params=(id,)
+        res = db.execute("SELECT rowid,email,firstname,lastname,role FROM users WHERE rowid = ?",params)
+        row = res.fetchone()
+        if row is None:
+            return None
+        user = {
+            "id": row["rowid"],
+            "email": row["email"],
+            "firstname": row["firstname"],
+            "lastname": row["lastname"],
+            "role": row["role"],
+        }
+        return user
 
 """
 get_user_by_email(email:str) -> dict:

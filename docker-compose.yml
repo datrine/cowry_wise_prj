@@ -1,0 +1,11 @@
+services:
+  frontend:
+    build: ./frontend_service
+    ports:
+      - 6000:6000
+  admin_backend:
+    build: ./admin_backend_service
+    ports:
+      - 5000:5000
+
+  

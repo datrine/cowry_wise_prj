@@ -1,4 +1,4 @@
-from admin_backend_service.messaging.rmq.rabbitmq_conn import get_channel 
+from frontend_service.messaging.rmq.rabbitmq_conn import get_channel 
 def setup_topic_users_exchange_and_queues():
     ch=get_channel()
     ch.exchange_declare(exchange='users', exchange_type='topic')
