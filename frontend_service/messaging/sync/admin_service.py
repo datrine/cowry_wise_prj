@@ -15,9 +15,9 @@ def get_book_by_id_request(id):
     return res_book.get("data")
 
 def update_book_by_id_request(id,data):
-    res=requests.put(f"{get_base_url()}/books/{id}",data=data)
+    res=requests.put(f"{get_base_url()}/books/{id}",data=data,headers={"Content-Type": "application/json"})
     if res.status_code>=400:
-        raise Exception("failed to update book with id: {}".format())
+        raise Exception(f"failed to update book with id: {id}")
     res_book=res.json()
     return res_book.get("data")
 
@@ -27,6 +27,6 @@ def get_books_request(filter:dict):
         "category":filter.get("category"),
         "publisher":filter.get("publisher")})
     if res.status_code>=400:
-        raise Exception("failed to get books"+"" if filter is None else " with filter: {}".format(filter))
+        raise Exception("failed to get books"+"" if filter is None else f" with filter: {filter}")
     res_filterable_books=res.json()
     return res_filterable_books.get("data")

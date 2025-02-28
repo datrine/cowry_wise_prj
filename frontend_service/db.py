@@ -23,7 +23,7 @@ def get_db()-> sqlite3.Connection:
             detect_types=sqlite3.PARSE_DECLTYPES
         )
         g.db.row_factory = sqlite3.Row
-        db=g.db
+    db=g.db
     return db
 
 @click.command('init-db')

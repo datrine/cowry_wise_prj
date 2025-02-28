@@ -74,6 +74,6 @@ def format_user_book_load_row(row):
                 "title":row["title"],
                 "category":row["category"],
                 "publisher":row["publisher"],
-                "loan_date": datetime.fromisoformat( row["loan_date_dt"]),
-                "return_date":  datetime.fromisoformat( row["return_date_dt"]),
+                "loan_date": row["loan_date_dt"],
+                "return_date":   row["return_date_dt"],
             }

@@ -27,7 +27,10 @@ def save_book(title:str,publisher:str,category:str):
 def get_book_by_id(id):
     with get_db() as db:
         params=(id,)
-        res = db.execute("SELECT rowid,title,publisher,category, is_available FROM books WHERE rowid = ?",params)
+        res = db.execute("""
+                         SELECT rowid,title,publisher,category, is_available,
+                         date(loan_date) as loan_date_dt,
+                         date(return_date) as return_date_dt FROM books WHERE rowid = ?""",params)
         row = res.fetchone()
         if row is None:
             return None
@@ -65,11 +68,17 @@ def get_books(filters:dict):
                 else:
                     params += (filters.get(filter),)
                 prev = True
-            sql="SELECT rowid,title,publisher,category,is_available FROM books " + where_str
+            sql="""
+                SELECT rowid,title,publisher,category,is_available,date(loan_date) as loan_date_dt,
+                date(return_date) as return_date_dt FROM books 
+                """ + where_str
             print(filters,params, sql)   
             res = db.execute(sql, params)
         else:
-            sql="SELECT rowid,title, publisher, category, is_available FROM books "
+            sql="""
+                SELECT rowid,title, publisher, category, is_available,date(loan_date) as loan_date_dt,
+                            date(return_date) as return_date_dt FROM books
+            """
             print(sql)   
             res = db.execute(sql)
         rows = res.fetchall()
@@ -102,7 +111,10 @@ def update_book_by_id(id,update_fields:dict):
         res = db.execute(sql,params)
         if res.rowcount == 0:
             raise Exception("Update failed for book id "+id)
-        res = db.execute("SELECT rowid,title,publisher,category, is_available from books WHERE rowid=?",(id,))
+        res = db.execute("""
+                         SELECT rowid,title,publisher,category, is_available,date(loan_date) as loan_date_dt,
+                            date(return_date) as return_date_dt from books WHERE rowid=?
+                         """,(id,))
         row = res.fetchone()
         book = format_book_row(row=row)
     return book

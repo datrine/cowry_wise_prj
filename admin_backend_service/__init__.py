@@ -44,7 +44,7 @@ def config_app(app:Flask, test_config=None):
         app.config.from_mapping(test_config)
         return
     else:
-        app.config["DATABASE_URL"]=os.getenv('DATABASE_URL') if os.getenv('DATABASE_URL')  else  os.path.join('dmin_backend_service.sqlite')
+        app.config["DATABASE_URL"]=os.getenv('DATABASE_URL') if os.getenv('DATABASE_URL')  else  os.path.join('admin_backend_service.sqlite')
         app.config["SECRET_KEY"]= os.getenv('SECRET_KEY') if os.getenv('SECRET_KEY') else'dev',
         app.config["FRONTEND_SERVER_URL"]=os.getenv('FRONTEND_SERVER_URL') if os.getenv('FRONTEND_SERVER_URL') else "http://localhost:6000"
     

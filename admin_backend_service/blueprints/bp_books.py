@@ -1,4 +1,4 @@
-import functools
+from datetime import datetime
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for,jsonify
@@ -68,18 +68,29 @@ def update_book_handler(id):
         if not id:
             return jsonify({"message":'id is required.'}),400
         body_as_json = request.get_json(force=False)
-        is_available_update=None
-        category_update=None
-        publisher_update=None
+        print("kgjvhcgxrxrxxhdyfyfu")
         try:
              category_update=body_as_json.get('category')
              publisher_update=body_as_json.get('publisher')
              is_available_update=body_as_json.get('is_available')
+             return_date_update=body_as_json.get('return_date')
+             if return_date_update is not None:
+                  return_date_update=datetime.fromisoformat(return_date_update)
+             loan_date_update=body_as_json.get('loan_date')
+             if return_date_update is not None:
+                  loan_date_update=datetime.fromisoformat(loan_date_update)
         except Exception as e:
+            print(e)
             return jsonify({"message":str(e)}),400
         try:
             print("Success")
-            book_updated=update_book_by_id(id=id,update_fields={"is_available":is_available_update})
+            book_updated=update_book_by_id(id=id,update_fields={
+                 "is_available":is_available_update,
+                 "category":category_update,
+                 "publisher":publisher_update,
+                 "return_date":return_date_update,
+                 "loan_date":loan_date_update,
+                 })
             if not book_updated:
                 return jsonify({"message":f"book with id {id} failed to update."}),404
             

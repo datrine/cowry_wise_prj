@@ -36,7 +36,7 @@ def validate_book_updatable_fields(filters:dict):
     if  len(filters) == 0:
         raise Exception("At least a field must be updated")
     for filter in filters:
-        if filter not in ["title","category","publisher","is_available"]:
+        if filter not in ["title","category","publisher","is_available","return_date","loan_date"]:
             raise Exception(f"Invalid filter {filter}")
     print(filters)
     return True
@@ -60,6 +60,8 @@ def format_book_row(row):
                 "publisher": row["publisher"],
                 "category": row["category"],
                 "is_available": True if row["is_available"] > 0 else False,
+                "loan_date": row["loan_date_dt"],
+                "return_date": row["return_date_dt"],
             }
 
 
