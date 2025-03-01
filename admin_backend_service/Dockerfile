@@ -6,7 +6,7 @@ WORKDIR /app
 
 COPY . .
 
-EXPOSE 6000
+EXPOSE 5000
 
 RUN chmod +x ./start_up.sh
 

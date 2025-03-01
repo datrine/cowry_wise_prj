@@ -3,9 +3,21 @@ services:
     build: ./frontend_service
     ports:
       - 6000:6000
+    environment:
+       ADMIN_SERVER_URL: "http://admin_backend:5000"
+       DATABASE_URL:
+       SECRET_KEY:
+    networks:
+      - app_net
   admin_backend:
     build: ./admin_backend_service
     ports:
       - 5000:5000
-
-  
+    environment:
+       FRONTEND_SERVER_URL: "http://frontend:6000"
+       DATABASE_URL:
+       SECRET_KEY:
+    networks:
+      - app_net
+networks:
+  app_net:
