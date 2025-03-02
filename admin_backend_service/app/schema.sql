@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     lastname VARCHAR(255) NOT NULL,

@@ -1,29 +1,40 @@
-import functools
-
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for,jsonify
+    Blueprint,jsonify
 )
 
-from app.db import get_db
-from app.repository.book import (get_books)
-from app.messaging.sync.frontend_service import (get_users_from_frontend)
+from app.repository.borrow_list import (get_borrow_list)
 
 bp = Blueprint('borrow_list', __name__)
 
 @bp.route('/', methods=("GET",))
 def list_of_users_and_books_borrowed():
-        
-        borrowed_books=get_books(filters={"is_available": False})
-        if not borrowed_books:
-                return jsonify({"data":[]})
-        
-        ids=[rec.get("user_id") for rec in borrowed_books]
-        for id in ids:
-                list_str=str(id)+","
-        users=get_users_from_frontend(filters={"ids": list_str})
-        for user in users:
-                for book in borrowed_books:
-                        if book.get("user_id")==user.get("id"):
-                                book["user"]=user
-        return jsonify({"data":users})
+    dic = dict()
+    items = []
+    borrow_recs=get_borrow_list(filters=None)
+    #users=get_users_from_frontend(filters={"ids": ids})
+    for borrow in borrow_recs:
+        it =dic.get(borrow.get("id"))
+        if not it:
+           dic[borrow.get("id")] = borrow
+           it=dic[borrow.get("id")]
+        if it.get("books") is None:
+            it["books"] =list()
+            print(it)
+        it["books"].append({
+            "id": it["book_id"],
+            "title": it.get("title"),
+            "publisher": it.get("publisher"),
+            "category": it.get("category"),
+            "loan_date": it.get("loan_date"),
+            "return_date": it.get("return_date"),
+            })
+        it.pop("book_id")
+        it.pop("title")
+        it.pop("publisher",)
+        it.pop("category")
+        it.pop("return_date")
+        it.pop("loan_date")
+        print(it)
+        items.append(it)
+    return jsonify({"data":items})
 

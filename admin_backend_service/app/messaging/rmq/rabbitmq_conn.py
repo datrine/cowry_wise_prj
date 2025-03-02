@@ -16,9 +16,6 @@ def setup_conn():
 #channel=None
 
 def get_channel():
-    #global channel
-    #if channel is not None and channel.is_open() is True:
-    #    return channel
     conn = setup_conn()
     channel = conn.channel()
     channel.is_open

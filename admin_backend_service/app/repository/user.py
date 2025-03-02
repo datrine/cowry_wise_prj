@@ -59,6 +59,33 @@ def get_users(filters:dict):
     return books
 
 """
+get_users(filters:dict) -> List[dict]:
+get users (filterable)
+"""
+def get_users_by_ids(filters:tuple):
+
+    with get_db() as db:
+        where_str= ""
+        prev=False
+        if  len(filters) > 0:
+            where_str += " WHERE "
+            for filter in filters:
+                if prev:
+                    where_str += " OR "
+                where_str += f"rowid = ? "
+                prev = True
+                
+            res = db.execute("SELECT rowid, email,firstname,lastname, role FROM users " + where_str, filters)
+        else:
+            res = db.execute("SELECT rowid, email,firstname,lastname, role FROM users")
+        rows = res.fetchall()
+        books = []
+        for row in rows:
+            books.append(format_user_row(row))
+    return books
+
+
+"""
 get_user_by_id(id:str) -> dict:
 get user by id
 """

@@ -22,7 +22,8 @@ def test_get_book_by_id(existing_book:dict):
     assert book.get("publisher") == existing_book.get("publisher")
 
 def test_update_book_fields_by_id(existing_book:dict):
-    book=  update_book_by_id(id=existing_book.get("id"),update_fields={"category":"new_category","publisher":"new_publisher"})
+    book=  update_book_by_id(id=existing_book.get("id"),update_fields={
+        "category":"new_category","publisher":"new_publisher"})
     assert book is not None
     assert book.get("title") == existing_book.get("title")
     assert book.get("category") == "new_category"

@@ -1,4 +1,3 @@
-import sqlite3 
 from app.repository.util import (validate_book_filters,validate_book_updatable_fields,format_book_row)
 from app.db import get_db
 

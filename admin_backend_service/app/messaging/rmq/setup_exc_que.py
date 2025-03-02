@@ -19,3 +19,24 @@ def setup_topic_books_exchange_and_queues():
     ch.queue_bind(exchange='topic_books', queue='queue_books', routing_key='books.*')
     ch.queue_bind(exchange='topic_books', queue='queue_new_books', routing_key='books.new_book')
     ch.queue_bind(exchange='topic_books', queue='queue_updated_books', routing_key='books.updated_book')
+
+
+    
+def setup_topic_borrow_list_exchange_and_queues():
+    ch=get_channel()
+    ch.exchange_declare(exchange='topic_borrow_list_items', exchange_type='topic')
+    ch.queue_declare(queue='queue_borrow_list_items')
+    ch.queue_declare(queue='queue_new_borrow_list_items')
+    ch.queue_declare(queue='queue_updated_borrow_list_items')
+    ch.queue_bind(
+        exchange='topic_borrow_list_items', 
+        queue='queue_borrow_list_items', 
+        routing_key='borrow_list_items.*')
+    ch.queue_bind(
+        exchange='topic_borrow_list_items', 
+        queue='queue_new_borrow_list_items', 
+        routing_key='borrow_list_items.new_borrow_list_item')
+    ch.queue_bind(
+        exchange='topic_borrow_list_items', 
+        queue='queue_updated_borrow_list_items', 
+        routing_key='borrow_list_items.updated_borrow_list_item')
