@@ -2,7 +2,7 @@ import sqlite3
 from app.repository.util import (validate_book_filters,validate_book_updatable_fields,format_book_row)
 from app.db import get_db
 
-def save_book(title:str,publisher:str,category:str):
+def save_book(title:str,publisher:str,category:str,loan_date=None,return_date=None,is_available=True):
     assert title is not None
     assert type(title) is str
     assert publisher is not None
@@ -11,9 +11,12 @@ def save_book(title:str,publisher:str,category:str):
     assert type(category) is str
 
     with get_db() as db:
-        is_available=True
-        params=(title,publisher,category,is_available)
-        res = db.execute("INSERT INTO books (title,publisher,category,is_available) VALUES(?,?,?,?)",params)
+        params=(title,publisher,category,is_available,return_date,loan_date)
+        res = db.execute("""
+                         INSERT INTO books 
+                         (title,publisher,category,is_available,loan_date,return_date) 
+                         VALUES(?,?,?,?,?,?)
+                         """,params)
         id = res.lastrowid
         book = {
             "id": id,
@@ -21,6 +24,8 @@ def save_book(title:str,publisher:str,category:str):
             "publisher": publisher,
             "category": category,
             "is_available":is_available,
+            "loan_date":loan_date,
+            "return_date":return_date,
         }
     return book
 
@@ -30,7 +35,8 @@ def get_book_by_id(id):
         res = db.execute("""
                          SELECT rowid,title,publisher,category, is_available,
                          date(loan_date) as loan_date_dt,
-                         date(return_date) as return_date_dt FROM books WHERE rowid = ?""",params)
+                         date(return_date) as return_date_dt FROM books WHERE rowid = ?
+                         """,params)
         row = res.fetchone()
         if row is None:
             return None

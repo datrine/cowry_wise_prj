@@ -69,6 +69,11 @@ def format_user_book_load_row(row):
                 "id": row["rowid"],
                 "book_id":row["book_id"],
                 "user_id": row["user_id"],
+                "lastname":row["lastname"],
+                "firstname":row["firstname"],
+                "title":row["title"],
+                "category":row["category"],
+                "publisher":row["publisher"],
                 "loan_date": row["loan_date_dt"],
                 "return_date": row["return_date_dt"],
             }

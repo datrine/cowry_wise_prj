@@ -26,10 +26,4 @@ with app.app_context():
     try:
         t1.start()
     except KeyboardInterrupt:
-        
         print("\nStopping consumers...")
-        #t1.join()
-
-
-#t1=threading.Thread(target=msg_consumer.consume,args=(app,))
-#t1.start()

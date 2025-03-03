@@ -7,7 +7,7 @@ from app.repository.borrow_list import (get_borrow_list)
 bp = Blueprint('borrow_list', __name__)
 
 @bp.route('/', methods=("GET",))
-def list_of_users_and_books_borrowed():
+def list_of_users_and_books_borrowed_handler():
     dic = dict()
     items = []
     borrow_recs=get_borrow_list(filters=None)
@@ -36,5 +36,5 @@ def list_of_users_and_books_borrowed():
         it.pop("loan_date")
         print(it)
         items.append(it)
-    return jsonify({"data":items})
+    return jsonify({"data":items}),200
 

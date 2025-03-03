@@ -3,7 +3,7 @@ from datetime import datetime
 from app.db import get_db
 from app.repository.util import (format_user_book_load_row, validate_user_filters)
 
-def save_user_book_loan(input:dict):
+def save_borrow_list_item(input:dict):
     book_id=input.get('book_id')
     user_id=input.get('user_id')
     email=input.get('email')
@@ -90,7 +90,7 @@ def get_borrow_list(filters:dict):
             books.append(format_user_book_load_row(row))
     return books
 
-def get_user_book_loan_by_id(id):
+def get_borrow_list_item_by_id(id):
     with get_db() as db:
         params=(id,)
         print(params)

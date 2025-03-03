@@ -9,12 +9,13 @@ def init_app(app:Flask):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
 
-def init_db():
+def init_db(schema='schema.sql'):
     db = get_db()
-    with current_app.open_resource('schema.sql') as f:
+    with current_app.open_resource(schema) as f:
         db.executescript(f.read().decode('utf8'))
 
 def get_db()-> sqlite3.Connection:
+    #print("\n",current_app.config['DATABASE_URL'])
     if 'db' not in g:
         g.db = sqlite3.connect(
             current_app.config['DATABASE_URL'],

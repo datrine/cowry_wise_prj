@@ -4,6 +4,7 @@ import json
 def publish(exchange,routing_key, payload:dict):
     ch=get_channel()
     payload_str=json.dumps(payload)
+    print("payload_str: ",payload_str,exchange,routing_key)
     ch.basic_publish(
         exchange=exchange,
         routing_key=routing_key,

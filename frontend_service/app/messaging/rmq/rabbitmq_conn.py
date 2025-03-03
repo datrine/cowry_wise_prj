@@ -16,12 +16,10 @@ def setup_conn():
 #channel=None
 
 def get_channel():
-    #global channel
-    #if channel is not None and channel.is_open() is True:
-    #    return channel
+    if 'rabbitmq_channel' in g and g.rabbitmq_channel.is_open:
+        return g.rabbitmq_channel
     conn = setup_conn()
-    channel = conn.channel()
-    channel.is_open
-    return channel
+    g.rabbitmq_channel = conn.channel()
+    return g.rabbitmq_channel
 
 

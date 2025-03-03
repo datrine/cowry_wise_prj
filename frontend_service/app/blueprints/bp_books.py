@@ -36,14 +36,13 @@ def get_book_by_id_handler(id):
         if not id:
             return jsonify({"message":'id is required.'}),400
         try:
-            print("SuccessmnkjggcfxdzrzrdzrdzdzerWastdtfyigfiyftycutfdtudrutfdutdrrydydryseatesrdstdyr")
             book_found=get_book_by_id(id=id)
             if not book_found:
                 return jsonify({"message":f"book with id {id} not found."}),404
             
             return jsonify({"data":book_found}),200
         except Exception as e:
-            return jsonify({"message":str(e)}),400
+            return jsonify({"message":str(e)}),500
 
 
 

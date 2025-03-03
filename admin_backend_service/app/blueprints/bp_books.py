@@ -65,7 +65,7 @@ def add_book_handler():
         return jsonify({"data":book_created}),201
 
 @bp.route('/<id>', methods=("GET",))
-def get_book_handler(id):
+def get_book_by_id_handler(id):
         if not id:
             return jsonify({"message":'id is required.'}),400
         try:

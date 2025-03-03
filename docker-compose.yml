@@ -4,9 +4,15 @@ services:
     ports:
       - 6000:6000
     environment:
-       ADMIN_SERVER_URL: "http://admin_backend:5000"
-       DATABASE_URL:
-       SECRET_KEY:
+      ADMIN_SERVER_URL: "http://admin_backend:5000"
+      DATABASE_URL:
+      SECRET_KEY:
+      RABBITMQ_URL:
+      RABBITMQ_SERVER: "rmq"
+      RABBITMQ_PORT:
+      RABBITMQ_USER:
+      RABBITMQ_PASS:
+      RABBITMQ_VHOST:
     networks:
       - app_net
   admin_backend:
@@ -14,9 +20,25 @@ services:
     ports:
       - 5000:5000
     environment:
-       FRONTEND_SERVER_URL: "http://frontend:6000"
-       DATABASE_URL:
-       SECRET_KEY:
+      FRONTEND_SERVER_URL: "http://frontend:6000"
+      DATABASE_URL:
+      SECRET_KEY:
+      RABBITMQ_URL:
+      RABBITMQ_SERVER: "rmq"
+      RABBITMQ_PORT:
+      RABBITMQ_USER:
+      RABBITMQ_PASS:
+      RABBITMQ_VHOST:
+    networks:
+      - app_net
+  rmq:
+    image: rabbitmq:4-management-alpine
+    ports:
+      - 5000:5000
+    environment:
+      RABBITMQ_DEFAULT_USER:
+      RABBITMQ_DEFAULT_PASS:
+      RABBITMQ_DEFAULT_VHOST:
     networks:
       - app_net
 networks:

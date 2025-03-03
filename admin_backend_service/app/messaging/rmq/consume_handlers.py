@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from app.repository.user import (save_user,update_user_by_id)
 from app.repository.book import (save_book,update_book_by_id)
-from app.repository.borrow_list import (save_user_book_loan)
+from app.repository.borrow_list import (save_borrow_list_item)
 import logging
 mylogger = logging.getLogger("MyLogger")
 from flask import Flask
@@ -13,28 +13,35 @@ def consume(app:Flask):
         ch=get_channel()
         ch.basic_consume(
             queue="queue_new_users", 
-            on_message_callback= new_user_message_handler)
+            on_message_callback= new_user_message_handler,auto_ack=True)
         ch.basic_consume(
             queue="queue_updated_users",
-            on_message_callback= updated_user_message_handler)
+            on_message_callback= updated_user_message_handler,auto_ack=True)
         ch.basic_consume(
             queue="queue_new_borrow_list_items",
-            on_message_callback= new_borrow_list_item_message_handler)
+            on_message_callback= new_borrow_list_item_message_handler,auto_ack=True)
+        ch.basic_consume(
+            queue="queue_new_borrow_list_items",
+            on_message_callback= new_borrow_list_item_message_handler,auto_ack=True)
+        ch.basic_consume(
+            queue="queue_updated_books",
+            on_message_callback= updated_book_message_handler,auto_ack=True)
         print("Consumer started")
-        ch.basic_ack()
         ch.start_consuming()
 
 def new_user_message_handler(ch, method, properties, body):
     user=json.loads(body)
     mylogger.info(user)
     print(user)
+    print("queue_new_users started")
     try:
+        ch.confirm_delivery()
         save_user(
             email=user.get('email'),
             firstname=user.get('firstname'),
             lastname=user.get('lastname')
             )
-        ch.basic_ack()
+        #ch.basic_ack()
     except Exception as e:
         mylogger.error(e)
 
@@ -47,7 +54,6 @@ def updated_user_message_handler(ch, method, properties, body):
             "lastname":user.get('updates').get('lastname'),
             "firstname":user.get('updates').get('firstname'),
             })
-        ch.basic_ack()
     except Exception as e:
         mylogger.error(e)
     
@@ -55,7 +61,7 @@ def new_borrow_list_item_message_handler(ch, method, properties, body):
     input=json.loads(body)
     print(body)
     try:
-        save_user_book_loan( {       
+        save_borrow_list_item( {       
             "book_id":input.get('book_id'),
             "user_id":input.get('user_id'),
             "email":input.get('email'),
@@ -64,17 +70,20 @@ def new_borrow_list_item_message_handler(ch, method, properties, body):
             "title":input.get('title'),
             "category":input.get('category'),
             "publisher":input.get('publisher'),
+            "is_available":input.get('is_available'),
             "loan_date":datetime.fromisoformat( input.get('loan_date')),
             "return_date":datetime.fromisoformat(input.get('return_date')),
             }
         )
-        ch.basic_ack()
+        #ch.basic_ack()
+        ch.confirm_delivery()
     except Exception as e:
         mylogger.error(e)
 
 def updated_book_message_handler(ch, method, properties, body):
     book=json.loads(body)
     mylogger.info(book)
+    #print("dfzdffxgfcjgvjhvkjbjkbjbnklnlkbkbkbknlkjbjbj: ",book)
     try:
         update_book_by_id(id=book.get('id'),update_fields={
             "title":book.get('updates').get('email'),
@@ -84,8 +93,8 @@ def updated_book_message_handler(ch, method, properties, body):
             "return_date":book.get('updates').get('return_date'),
             "is_available":book.get('updates').get('is_available'),
             })
-        ch.basic_ack()
     except Exception as e:
+        print(e)
         mylogger.error(e)
     
 #def new_book_message_handler(ch, method, properties, body):

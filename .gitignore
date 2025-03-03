@@ -5,4 +5,7 @@ pyproject.toml
 instance
 */.env
 **/.env
+**/.env.*
 */.env.*
+**/_pycache
+*/.coverage

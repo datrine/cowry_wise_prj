@@ -29,7 +29,8 @@ def get_book_by_id(id):
         res = db.execute("""
                          SELECT rowid,title,publisher,category, is_available,
                          date(loan_date) as loan_date_dt,
-                         date(return_date) as return_date_dt FROM books WHERE rowid = ?""",params)
+                         date(return_date) as return_date_dt FROM books WHERE rowid = ?
+                         """,params)
         row = res.fetchone()
         if row is None:
             return None
@@ -107,9 +108,9 @@ def update_book_by_id(id,update_fields:dict):
                 params+=(1 if bool(update_fields.get(field))  else 0,)
             else: params += (update_fields[field],)
             prev = True
-        params =params+ (id,)
+        params =params+ (int(id),)
         sql="UPDATE books "+set_str+ " WHERE rowid=?"
-        print(sql, params)
+        print(sql, params,update_fields)
         res = db.execute(sql,params)
         if res.rowcount == 0:
             raise Exception("Update failed for book id "+id)

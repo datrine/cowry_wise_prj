@@ -53,10 +53,10 @@ def get_users(filters:dict):
         else:
             res = db.execute("SELECT rowid, email,firstname,lastname, role FROM users")
         rows = res.fetchall()
-        books = []
+        users = []
         for row in rows:
-            books.append(format_user_row(row))
-    return books
+            users.append(format_user_row(row))
+    return users
 
 """
 get_users(filters:dict) -> List[dict]:
@@ -79,10 +79,10 @@ def get_users_by_ids(filters:tuple):
         else:
             res = db.execute("SELECT rowid, email,firstname,lastname, role FROM users")
         rows = res.fetchall()
-        books = []
+        users = []
         for row in rows:
-            books.append(format_user_row(row))
-    return books
+            users.append(format_user_row(row))
+    return users
 
 
 """
@@ -143,8 +143,8 @@ def update_user_by_id(id,update_fields:dict):
         print(sql)
         res = db.execute(sql,params)
         if res.rowcount == 0:
-            raise Exception("Update failed for user id "+id)
-        res = db.execute("SELECT rowid,email,lastname,firstname,role from books WHERE rowid=?",(id,))
+            raise Exception(f"Update failed for user id {id}")
+        res = db.execute("SELECT rowid,email,lastname,firstname,role from users WHERE rowid=?",(id,))
         row = res.fetchone()
-        book = format_user_row(row=row)
-    return book
+        user = format_user_row(row=row)
+    return user

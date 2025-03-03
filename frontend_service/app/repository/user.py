@@ -111,7 +111,6 @@ def get_user_by_id(id):
 """
 get_user_by_email(email:str) -> dict:
 get user by email
-"""
 def get_user_by_email(email):
     assert email is not None
     assert type(email) is str
@@ -123,7 +122,7 @@ def get_user_by_email(email):
             return None
         user = format_user_row(row=row)
     return user
-
+"""
 
 def update_user_by_id(id,update_fields:dict):
     assert id is not None
@@ -147,7 +146,7 @@ def update_user_by_id(id,update_fields:dict):
         res = db.execute(sql,params)
         if res.rowcount == 0:
             raise Exception("Update failed for user id "+id)
-        res = db.execute("SELECT rowid,email,lastname,firstname,role from books WHERE rowid=?",(id,))
+        res = db.execute("SELECT rowid,email,lastname,firstname,role from users WHERE rowid=?",(id,))
         row = res.fetchone()
         book = format_user_row(row=row)
     return book
