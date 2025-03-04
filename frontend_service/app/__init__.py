@@ -1,5 +1,4 @@
 import threading
-import os
 from app.app import create_app
 import app.messaging as messaging
 import app.messaging.rmq.consumer as msg_consumer
@@ -24,15 +23,8 @@ with app.app_context():
     # import books blueprint
     from app.blueprints import bp_books
     app.register_blueprint(bp_books.bp,url_prefix='/books')
-    #messaging.init()
     t1=threading.Thread(target=msg_consumer.consume,args=(app,),daemon=True)
     try:
         t1.start()
     except KeyboardInterrupt:
-        
         print("\nStopping consumers...")
-        #t1.join()
-
-
-#t1=threading.Thread(target=msg_consumer.consume,args=(app,))
-#t1.start()

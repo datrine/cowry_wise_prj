@@ -1,6 +1,5 @@
 import json
-from app.repository.user import (save_user,update_user_by_id)
-from app.repository.book import (save_book,update_book_by_id,delete_book_by_id)
+from app.repository.book import (save_book,delete_book_by_id)
 import logging
 mylogger = logging.getLogger("MyLogger")
     

@@ -36,34 +36,3 @@ def config_app(app:Flask, test_config=None):
         app.config["RABBITMQ_PASS"]=os.getenv('RABBITMQ_PASS') if os.getenv('RABBITMQ_PASS') else "guest"
         app.config["RABBITMQ_VHOST"]=os.getenv('RABBITMQ_VHOST') if os.getenv('RABBITMQ_VHOST') else "/"
     return
-
-
-
-
-
-
-
-
-
-#"""import threading
-#import os
-#from app.app import create_app
-#import app.messaging as messaging
-#import app.messaging.consumer as msg_consumer
-
-#from flask import Flask
-#app=create_app()
-#if __name__ == "__main__":
-#    app.run(debug=True)
-#from . import db
-#with app.app_context():
-#    db.init_app(app)
-#    db.init_db()
-#    messaging.init()
-
-
-#t1=threading.Thread(target=msg_consumer.consume,args=(app,))
-#t1.start()
-#t1.join()
-
-#"""

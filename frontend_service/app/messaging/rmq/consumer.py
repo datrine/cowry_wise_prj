@@ -3,7 +3,6 @@ from app.messaging.rmq.rabbitmq_conn import get_channel
 from app.messaging.rmq.consume_handlers import (
     new_book_message_handler,
     deleted_book_message_handler,) 
-import json
 ch=None
 def consume(app:Flask):
     with app.app_context():

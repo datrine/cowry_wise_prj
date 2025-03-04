@@ -2,10 +2,6 @@ from app.messaging.rmq.producer import publish
 
 def publish_new_user(user):
     publish(exchange="topic_users", routing_key="users.new_user", payload=user)
-    
-#def publish_update_user(user):
-#    publish(
-#        exchange="topic_users", routing_key="users.updated_user", payload=user)
 
 def publish_update_book(book_updates):
     print("book_updates: ",book_updates)

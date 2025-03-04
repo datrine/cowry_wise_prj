@@ -163,37 +163,3 @@ def borrow_book_handler(id):
         "publisher":borrow_info.get("publisher"),
         "return_date":return_date.isoformat(),
         "loan_date":borrow_info.get("loan_date").isoformat(),}}),201
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-@bp.route('/<id>', methods=("GET",))
-def get_book_by_id(id):
-        
-        book_created=get_book_by_id_request(id=id)
-        
-        return jsonify({"data":book_created}),200
-
-
-@bp.route('/status/available', methods=("GET",))
-def get_available_books():
-        try:
-            book_created=get_books_request({"is_available":True})
-            return jsonify({"data":book_created}),200
-        except Exception as e:
-            return jsonify({"message":str(e)}),400
-
-"""

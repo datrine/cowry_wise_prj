@@ -108,22 +108,6 @@ def get_user_by_id(id):
         }
         return user
 
-"""
-get_user_by_email(email:str) -> dict:
-get user by email
-def get_user_by_email(email):
-    assert email is not None
-    assert type(email) is str
-    with get_db() as db:
-        params=(email,)
-        res = db.execute("SELECT rowid, email,firstname,lastname, role FROM users WHERE email = ?",params)
-        row = res.fetchone()
-        if row is None:
-            return None
-        user = format_user_row(row=row)
-    return user
-"""
-
 def update_user_by_id(id,update_fields:dict):
     assert id is not None
     assert type(id) is int

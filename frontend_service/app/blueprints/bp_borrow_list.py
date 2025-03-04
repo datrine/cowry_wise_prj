@@ -1,11 +1,7 @@
-from datetime import datetime
-
 from flask import (
-    Blueprint, request, jsonify
+    Blueprint, jsonify
 )
 
-from app.repository.user import (get_user_by_id)
-#from app.messaging.sync.admin_service import (get_book_by_id_request,update_book_by_id_request)
 from app.repository.borrow_list import (get_borrow_list,)
 
 bp = Blueprint('borrow_list', __name__,)
