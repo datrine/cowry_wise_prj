@@ -9,3 +9,4 @@ instance
 */.env.*
 **/_pycache
 */.coverage
+**/.sqlite
