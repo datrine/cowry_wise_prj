@@ -1,5 +1,9 @@
 services:
   frontend:
+    depends_on:
+      rmq:
+        condition: service_healthy
+        restart: true
     build: ./frontend_service
     ports:
       - 6000:6000
@@ -17,6 +21,10 @@ services:
       - app_net
   admin_backend:
     build: ./admin_backend_service
+    depends_on:
+      rmq:
+        condition: service_healthy
+        restart: true
     ports:
       - 5000:5000
     environment:
@@ -33,8 +41,12 @@ services:
       - app_net
   rmq:
     image: rabbitmq:4-management-alpine
-    ports:
-      - 5000:5000
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
     environment:
       RABBITMQ_DEFAULT_USER:
       RABBITMQ_DEFAULT_PASS:
