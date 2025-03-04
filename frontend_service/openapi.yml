@@ -1,0 +1,204 @@
+openapi: 3.0.0
+info:
+  title: Frontend Library Service
+  version: 1.0.0
+paths:
+  /users:
+   post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+  /books:
+    parameters:
+      - in: query
+        name: category
+        schema:
+          type: string
+        description: Filter books by category
+      - in: query
+        name: publisher
+        schema:
+          type: string
+        description: Filter books by publisher
+    get:
+      summary: Get all books
+      responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items: 
+                    $ref:  "#/components/schemas/Book"
+    
+  /books/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get a book by id
+      responses:
+        '200':
+          description: Book fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+
+  /books/{id}/borrow:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    post:
+      summary: Borrow a book for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BorrowBook'
+      responses:
+        '201':
+          description: Book borrowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookBorrowInfo'
+
+  /books/status/available:
+    get:
+      summary: Get books that are available
+      responses:
+        '201':
+          description: List successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailableBook'
+
+components:
+  schemas:
+    CreateUser:
+      type: object
+      properties:
+        email:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+
+    BorrowBook:
+      type: object
+      properties:
+        user_id:
+          type: integer
+        borrow_days:
+          type: integer
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+          
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        category:
+          type: string
+        publisher:
+          type: string
+        is_available:
+          type: boolean
+        return_date:
+          type: string
+        loan_date:
+          type: string
+
+    
+    AvailableBook:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        category:
+          type: string
+        publisher:
+          type: string
+        is_available:
+          type: boolean
+          default: true 
+
+    UserBorrowedBook:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        email:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/Book'
+
+    BookBorrowInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        email:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        category:
+          type: string
+        publisher:
+          type: string
+        is_available:
+          type: boolean
+        return_date:
+          type: string
+        loan_date:
+          type: string

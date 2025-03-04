@@ -1,0 +1,161 @@
+openapi: 3.0.0
+info:
+  title: Admin Backend Service
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      summary: List users
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+
+  
+  /books:
+    post:
+      summary: Add new book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBook'
+      responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items: 
+                    $ref:  "#/components/schemas/Book"
+  
+  /books/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    delete:
+      summary: Remove a book by id
+      responses:
+        '200':
+          description: Book removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Book removed successfully
+
+  /books/status/unavailable:
+    get:
+      summary: Get books that are unavailable
+      responses:
+        '201':
+          description: List successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnavailableBook'
+
+  /borrow_list:
+    get:
+      summary: Get users' borrowed books
+      responses:
+        '201':
+          description: Book borrowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserBorrowedBook'
+
+components:
+  schemas:    
+    CreateBook:
+      type: object
+      properties:
+        title:
+          type: string
+        category:
+          type: string
+        publisher:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+          
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        category:
+          type: string
+        publisher:
+          type: string
+        is_available:
+          type: boolean
+        return_date:
+          type: string
+        loan_date:
+          type: string
+
+    UnavailableBook:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        category:
+          type: string
+        publisher:
+          type: string
+        is_available:
+          type: boolean
+        return_date:
+          type: string
+        loan_date:
+          type: string  
+        date_available:
+          type: string      
+    UserBorrowedBook:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        email:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/Book'

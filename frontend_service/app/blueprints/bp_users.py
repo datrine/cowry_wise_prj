@@ -8,7 +8,7 @@ from app.messaging.rmq.publishers import (
 
 bp = Blueprint('users', __name__,)
 
-@bp.route('/register', methods=("POST",))
+@bp.route('/', methods=("POST",))
 def register_handler():
     body_as_json = request.get_json(force=False)
     email=body_as_json.get('email')
