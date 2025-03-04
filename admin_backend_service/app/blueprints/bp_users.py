@@ -1,7 +1,7 @@
 from flask import (
     Blueprint, request,jsonify
 )
-from app.repository.user import (get_users,get_users_by_ids)
+from app.repository.user import (get_users)
 
 bp = Blueprint('users', __name__)
 

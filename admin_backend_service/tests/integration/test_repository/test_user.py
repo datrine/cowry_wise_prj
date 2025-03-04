@@ -71,6 +71,11 @@ def test_get_user_by_id(existing_user:dict):
     assert book.get("lastname") == existing_user.get("lastname")
     assert book.get("firstname") == existing_user.get("firstname")
 
+def test_get_user_by_id_non_existing_user(app_context):
+    with app_context:
+        book= get_user_by_id(id=fake.random_int(min=1000,max=2000)) 
+        assert book is None
+
 def test_update_user_fields_by_id(existing_user:dict):
     lastname=fake.last_name()
     firstname=fake.first_name()
@@ -85,8 +90,42 @@ def test_update_user_fields_by_id(existing_user:dict):
     assert user.get("lastname") == lastname
     assert user.get("firstname") == firstname
 
-def test_get_all_books(db:sqlite3.Connection,existing_book:dict):
+def test_update_user_fields_by_id_non_exixting_user(app_context):
+    with app_context: 
+        lastname=fake.last_name()
+        firstname=fake.first_name()
+        email=fake.email()
+        try:
+            update_user_by_id(id=fake.random_int(min=10000,max=100000),update_fields={
+                "email":email,
+                "lastname":lastname,
+                "firstname":firstname
+                })
+            assert False, "should throw exception that user does not exist"
+        except Exception as e:
+            assert e is not None
+
+def test_update_user_fields_by_id_invaid_update_field(app_context):
+    with app_context: 
+        try:
+            update_user_by_id(id=fake.random_int(min=10000,max=100000),update_fields={
+                "invalid_field":"invalid_field_value",
+                })
+            assert False, "should throw exception that user does not exist"
+        except Exception as e:
+            assert e is not None
+
+def test_get_all_users(db:sqlite3.Connection,existing_book:dict):
     assert isinstance(db, sqlite3.Connection)
 
     books= get_users(None) 
     assert len(books)  > 0
+
+
+def test_get_all_users_invalid_field(db:sqlite3.Connection):
+    assert isinstance(db, sqlite3.Connection)
+    try:
+        get_users({"invalid_field":"invalid_field_value"})
+        assert False, "should throw exception that field is invalid"
+    except Exception as e:
+        isinstance(e, AssertionError)

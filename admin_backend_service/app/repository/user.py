@@ -36,7 +36,7 @@ def get_users(filters:dict):
 
     is_valid=validate_user_filters(filters)
     if is_valid is not True:
-        raise Exception("Invalid filters")
+        raise AssertionError("Invalid filters")
     with get_db() as db:
         where_str= ""
         prev=False
@@ -59,39 +59,12 @@ def get_users(filters:dict):
     return users
 
 """
-get_users(filters:dict) -> List[dict]:
-get users (filterable)
-"""
-def get_users_by_ids(filters:tuple):
-
-    with get_db() as db:
-        where_str= ""
-        prev=False
-        if  len(filters) > 0:
-            where_str += " WHERE "
-            for filter in filters:
-                if prev:
-                    where_str += " OR "
-                where_str += f"rowid = ? "
-                prev = True
-                
-            res = db.execute("SELECT rowid, email,firstname,lastname, role FROM users " + where_str, filters)
-        else:
-            res = db.execute("SELECT rowid, email,firstname,lastname, role FROM users")
-        rows = res.fetchall()
-        users = []
-        for row in rows:
-            users.append(format_user_row(row))
-    return users
-
-
-"""
 get_user_by_id(id:str) -> dict:
 get user by id
 """
 def get_user_by_id(id):
     db=get_db()
-    params=(id,)
+    params=(int(id),)
     res = db.execute("SELECT rowid,email,firstname,lastname,role FROM users WHERE rowid = ?",params)
     row = res.fetchone()
     if row is None:
@@ -104,23 +77,6 @@ def get_user_by_id(id):
         "role": row["role"],
     }
     return user
-
-"""
-get_user_by_email(email:str) -> dict:
-get user by email
-"""
-def get_user_by_email(email):
-    assert email is not None
-    assert type(email) is str
-    with get_db() as db:
-        params=(email,)
-        res = db.execute("SELECT rowid, email,firstname,lastname, role FROM users WHERE email = ?",params)
-        row = res.fetchone()
-        if row is None:
-            return None
-        user = format_user_row(row=row)
-    return user
-
 
 def update_user_by_id(id,update_fields:dict):
     assert id is not None
@@ -146,5 +102,7 @@ def update_user_by_id(id,update_fields:dict):
             raise Exception(f"Update failed for user id {id}")
         res = db.execute("SELECT rowid,email,lastname,firstname,role from users WHERE rowid=?",(id,))
         row = res.fetchone()
+        if row is None:
+            raise Exception(f"Update failed for user id {id}")
         user = format_user_row(row=row)
     return user

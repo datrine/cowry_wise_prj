@@ -48,7 +48,7 @@ def delete_book_by_id(id):
 def get_books(filters:dict):
     is_valid=validate_book_filters(filters)
     if is_valid is not True:
-        raise Exception("Invalid filters")
+        raise AssertionError("Invalid filters")
     with get_db() as db:
         where_str= ""
         prev=False

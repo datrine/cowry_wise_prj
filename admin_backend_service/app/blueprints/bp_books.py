@@ -9,6 +9,23 @@ from app.messaging.rmq.publishers import (publish_new_book,publish_delete_book)
 
 bp = Blueprint('books', __name__,)
 
+@bp.route('/', methods=("POST",))
+def add_book_handler():
+        body_as_json = request.get_json(force=False)
+        title=body_as_json.get('title')
+        publisher = body_as_json.get('publisher')
+        category = body_as_json.get('category')
+
+        if not title:
+            return jsonify({"message":'title is required.'}),400
+        elif not publisher:
+            return jsonify({"message":'publisher is required.'}),400
+        elif not category:
+            return jsonify({"message":'category is required.'}),400
+        
+        book_created=save_book(title=title,publisher=publisher,category=category)
+        publish_new_book(book=book_created)
+        return jsonify({"data":book_created}),201
 
 @bp.route('/', methods=("GET",))
 def get_books_handler():
@@ -35,34 +52,18 @@ def get_books_handler():
 @bp.route('/status/unavailable', methods=("GET",))
 def get_unavailable_books_handler():
         try:
-            books_found=get_books(filters={
-                                           "is_available":False})
+            books_found=get_books(filters={"is_available":False})
             print(books_found)
             if len(books_found) == 0:
                 return jsonify({"data":[]}),200
             for book in books_found:
-                book["date_available"]=(datetime.fromisoformat(book.get("return_date"))+timedelta(days=1)).isoformat()
+                if not book.get("return_date"):
+                    continue
+                book["date_available"]=(
+                     datetime.fromisoformat(book.get("return_date"))+timedelta(days=1)).isoformat()
             return jsonify({"data":books_found}),200
         except Exception as e:
             return jsonify({"message":str(e)}),400
-
-@bp.route('/', methods=("POST",))
-def add_book_handler():
-        body_as_json = request.get_json(force=False)
-        title=body_as_json.get('title')
-        publisher = body_as_json.get('publisher')
-        category = body_as_json.get('category')
-
-        if not title:
-            return jsonify({"message":'title is required.'}),400
-        elif not publisher:
-            return jsonify({"message":'publisher is required.'}),400
-        elif not category:
-            return jsonify({"message":'category is required.'}),400
-        
-        book_created=save_book(title=title,publisher=publisher,category=category)
-        publish_new_book(book=book_created)
-        return jsonify({"data":book_created}),201
 
 @bp.route('/<id>', methods=("GET",))
 def get_book_by_id_handler(id):
@@ -115,6 +116,13 @@ def update_book_handler(id):
             return jsonify({"message":f"loan date {str(e)}"}),400
         
         try:
+            book=get_book_by_id(id=id)
+            if not book:
+                return jsonify({"message":f"book with id {id} not found."}),404
+        except Exception as e:
+            return jsonify({"message":f"loan date {str(e)}"}),500
+        
+        try:
             print("Success")
             book_updated=update_book_by_id(id=id,update_fields={
                  "is_available":is_available_update,
@@ -140,12 +148,11 @@ def update_book_handler(id):
 
 @bp.route('/<id>', methods=("DELETE",))
 def delete_book_handler(id):
-
         if not id:
             return jsonify({"message":'id is required.'}),400
         try:
-            book_created=delete_book_by_id(id=id)
-            if not book_created:
+            book_deleted=delete_book_by_id(id=id)
+            if not book_deleted:
                 return jsonify({"message":f"book with id {id} not found."}),404
         except Exception as e:
             return jsonify({"message":str(e)}),400

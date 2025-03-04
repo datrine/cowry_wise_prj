@@ -129,6 +129,36 @@ def existing_book(db:sqlite3.Connection)->dict:
     return book
 
 @pytest.fixture
+def existing_unavailable_book(db:sqlite3.Connection)->dict:
+    with db:
+        loan_date=datetime.now()
+        return_date=datetime.now()
+        params=("existing_title","existing_publisher","existing_category",0,
+                return_date.isoformat(),loan_date.isoformat())
+        id= db.execute("""
+                       INSERT INTO books (title, publisher, category, is_available,return_date,loan_date) 
+                       VALUES (?,?,?,?,?,?)
+                       """,params).lastrowid
+        select_params=(id,)
+        cursor= db.execute("""
+                           SELECT rowid, title, publisher, category, is_available,
+                           date(loan_date) as loan_date_dt,date(return_date) as return_date_dt
+                           FROM books where rowid=?
+                           """,select_params)
+        row=cursor.fetchone()
+        mylogger.info ({"id":id,"par":select_params,"row":row})
+        book = {
+                "id": row["rowid"],
+                "title":row["title"],
+                "publisher": row["publisher"],
+                "category": row["category"],
+                "is_available":row["is_available"],
+                "loan_date":row["loan_date_dt"],
+                "return_date":row["return_date_dt"]
+            }
+    return book
+
+@pytest.fixture
 def existing_borrow_list_item(db:sqlite3.Connection)->dict:
     with db:
         book_id=1

@@ -87,25 +87,3 @@ def updated_book_message_handler(ch, method, properties, body):
     except Exception as e:
         print(e)
         mylogger.error(e)
-    
-#def new_book_message_handler(ch, method, properties, body):
-#    book=json.loads(body)
-#    mylogger.info(body)
-#    save_book(
-#        title=book.get('title'),
-#        category=book.get('category'),
-#        publisher=book.get('publisher'),
-#        loan_date=book.get('loan_date'),
-#        return_date=book.get('return_date')
-#        )
-
-#def updated_book_message_handler(ch, method, properties, body):
-#    book=json.loads(body)
-#    mylogger.info(book)
-#    update_book_by_id(id=book.get('id'),update_fields={
-#        "title":book.get('updates').get('email'),
-#        "category":book.get('updates').get('category'),
-#        "publisher":book.get('updates').get('publisher'),
-#        "loan_date":book.get('updates').get('loan_date'),
-#        "return_date":book.get('updates').get('return_date'),
-#        })
