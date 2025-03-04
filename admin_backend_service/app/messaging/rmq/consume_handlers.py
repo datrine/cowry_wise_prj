@@ -15,17 +15,11 @@ def consume(app:Flask):
             queue="queue_new_users", 
             on_message_callback= new_user_message_handler,auto_ack=True)
         ch.basic_consume(
-            queue="queue_updated_users",
-            on_message_callback= updated_user_message_handler,auto_ack=True)
-        ch.basic_consume(
-            queue="queue_new_borrow_list_items",
-            on_message_callback= new_borrow_list_item_message_handler,auto_ack=True)
-        ch.basic_consume(
-            queue="queue_new_borrow_list_items",
-            on_message_callback= new_borrow_list_item_message_handler,auto_ack=True)
-        ch.basic_consume(
             queue="queue_updated_books",
             on_message_callback= updated_book_message_handler,auto_ack=True)
+        ch.basic_consume(
+            queue="queue_new_borrow_list_items",
+            on_message_callback= new_borrow_list_item_message_handler,auto_ack=True)
         print("Consumer started")
         ch.start_consuming()
 
@@ -35,7 +29,6 @@ def new_user_message_handler(ch, method, properties, body):
     print(user)
     print("queue_new_users started")
     try:
-        ch.confirm_delivery()
         save_user(
             email=user.get('email'),
             firstname=user.get('firstname'),
@@ -45,17 +38,17 @@ def new_user_message_handler(ch, method, properties, body):
     except Exception as e:
         mylogger.error(e)
 
-def updated_user_message_handler(ch, method, properties, body):
-    user=json.loads(body)
-    mylogger.info(user)
-    try:
-        update_user_by_id(id=user.get('user_id'),update_fields={
-            "email":user.get('updates').get('email'),
-            "lastname":user.get('updates').get('lastname'),
-            "firstname":user.get('updates').get('firstname'),
-            })
-    except Exception as e:
-        mylogger.error(e)
+#def updated_user_message_handler(ch, method, properties, body):
+#    user=json.loads(body)
+#    mylogger.info(user)
+#    try:
+#        update_user_by_id(id=user.get('user_id'),update_fields={
+#            "email":user.get('updates').get('email'),
+#            "lastname":user.get('updates').get('lastname'),
+#            "firstname":user.get('updates').get('firstname'),
+#            })
+#    except Exception as e:
+#        mylogger.error(e)
     
 def new_borrow_list_item_message_handler(ch, method, properties, body):
     input=json.loads(body)
@@ -82,8 +75,6 @@ def new_borrow_list_item_message_handler(ch, method, properties, body):
 
 def updated_book_message_handler(ch, method, properties, body):
     book=json.loads(body)
-    mylogger.info(book)
-    #print("dfzdffxgfcjgvjhvkjbjkbjbnklnlkbkbkbknlkjbjbj: ",book)
     try:
         update_book_by_id(id=book.get('id'),update_fields={
             "title":book.get('updates').get('email'),

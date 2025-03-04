@@ -109,7 +109,7 @@ def borrow_book_handler():
         "return_date":return_date.isoformat(),
         "loan_date":borrow_info.get("loan_date").isoformat(),
         })
-    """
+    
     publish_new_borrow_list_item(new_borrow_list_item={
         "id":borrow_info.get("id"),
         "user_id":borrow_info.get("user_id"),
@@ -124,7 +124,7 @@ def borrow_book_handler():
         "return_date":return_date.isoformat(),
         "loan_date":borrow_info.get("loan_date").isoformat(),
     })
-    """
+    
     publish_update_book(book_updates={
         "id":book_id,
         "updates":{

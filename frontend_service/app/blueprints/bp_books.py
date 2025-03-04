@@ -8,13 +8,9 @@ from app.repository.book import (get_books,get_book_by_id)
 
 bp = Blueprint('books', __name__,)
 
-
 @bp.route('/', methods=("GET",))
 def get_books_handler():
         try:
-            ids_filter_value=request.args.get('ids')
-            if ids_filter_value:
-                ids_filter_value=ids_filter_value.split(',')
             category_filter_value=request.args.get('category')
             publisher_filter_value=request.args.get('publisher')
             is_available_filter_value=request.args.get('is_available')
@@ -24,6 +20,19 @@ def get_books_handler():
             books_found=get_books(filters={"category":category_filter_value,
                                            "publisher":publisher_filter_value,
                                            "is_available":is_available_filter_value})
+            print(books_found)
+            if len(books_found) == 0:
+                return jsonify({"data":[]}),200
+            return jsonify({"data":books_found}),200
+        except Exception as e:
+            return jsonify({"message":str(e)}),400
+
+
+@bp.route('/status/available', methods=("GET",))
+def get_available_books_handler():
+        try:
+            books_found=get_books(filters={
+                                           "is_available":True})
             print(books_found)
             if len(books_found) == 0:
                 return jsonify({"data":[]}),200

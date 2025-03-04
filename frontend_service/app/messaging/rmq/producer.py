@@ -5,8 +5,8 @@ def publish(exchange,routing_key, payload:dict):
     payload_str=json.dumps(payload)
     ch.basic_publish(exchange=exchange,routing_key=routing_key,body=payload_str)
     print("Published to exchange: " + 
-          exchange+" routing key: " +
-          routing_key+" with payload: " + payload_str)
+          exchange + " routing key: " +
+          routing_key + " with payload: " + payload_str)
 
 
 

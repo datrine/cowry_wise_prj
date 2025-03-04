@@ -1,4 +1,3 @@
-import sqlite3 
 from app.repository.util import (validate_book_filters,validate_book_updatable_fields,format_book_row)
 from app.db import get_db
 
@@ -31,7 +30,7 @@ def save_book(title:str,publisher:str,category:str,loan_date=None,return_date=No
 
 def get_book_by_id(id):
     with get_db() as db:
-        params=(id,)
+        params=(int(id),)
         res = db.execute("""
                          SELECT rowid,title,publisher,category, is_available,
                          date(loan_date) as loan_date_dt,
@@ -45,7 +44,7 @@ def get_book_by_id(id):
 
 def delete_book_by_id(id):
     with get_db() as db:
-        params=(id,)
+        params=(int(id),)
         res = db.execute("DELETE  FROM books WHERE rowid = ?",params)
         if res.rowcount != 1:
             return None
@@ -114,7 +113,7 @@ def update_book_by_id(id,update_fields:dict):
                 params+=(1 if bool(update_fields.get(field))  else 0,)
             else: params += (update_fields[field],)
             prev = True
-        params =params+ (id,)
+        params =params+ (int(id),)
         sql="UPDATE books "+set_str+ " WHERE rowid=?"
         print(sql, params)
         res = db.execute(sql,params)

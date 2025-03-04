@@ -5,7 +5,7 @@ from flask import (
 )
 
 from app.repository.book import (save_book,get_books,delete_book_by_id,get_book_by_id,update_book_by_id)
-from app.messaging.rmq.publishers import (publish_update_book,publish_new_book,)
+from app.messaging.rmq.publishers import (publish_new_book,publish_delete_book)
 
 bp = Blueprint('books', __name__,)
 
@@ -41,7 +41,7 @@ def get_unavailable_books_handler():
             if len(books_found) == 0:
                 return jsonify({"data":[]}),200
             for book in books_found:
-                book["date_available"]=datetime.fromisoformat(book.get("return_date"))+timedelta(days=1)
+                book["date_available"]=(datetime.fromisoformat(book.get("return_date"))+timedelta(days=1)).isoformat()
             return jsonify({"data":books_found}),200
         except Exception as e:
             return jsonify({"message":str(e)}),400
@@ -123,16 +123,16 @@ def update_book_handler(id):
                  "return_date":datetime.isoformat(return_date_update) if return_date_update is not None else None ,
                  "loan_date": datetime.isoformat(loan_date_update) if loan_date_update is not None else None,
                  })
-            publish_update_book(book_updates={
-                 "book_id":id,
-                 "updates":{
-                    "is_available":is_available_update,
-                    "category":category_update,
-                    "publisher":publisher_update,
-                    "return_date":datetime.isoformat(return_date_update) if return_date_update is not None else None ,
-                    "loan_date": datetime.isoformat(loan_date_update) if loan_date_update is not None else None,
-                 }
-            })
+            #publish_update_book(book_updates={
+                 #"id":id,
+                 #"updates":{
+                 #   "is_available":is_available_update,
+                 #   "category":category_update,
+                 #   "publisher":publisher_update,
+                 #   "return_date":datetime.isoformat(return_date_update) if return_date_update is not None else None ,
+                 #   "loan_date": datetime.isoformat(loan_date_update) if loan_date_update is not None else None,
+                 #}
+            #})
             return jsonify({"data":book_updated}),200
         except Exception as e:
             return jsonify({"message":f"book with id {id} failed to update.{str(e)}"}),400
@@ -149,5 +149,8 @@ def delete_book_handler(id):
                 return jsonify({"message":f"book with id {id} not found."}),404
         except Exception as e:
             return jsonify({"message":str(e)}),400
+        publish_delete_book(book_id_payload={
+            "id":id
+        })
         return jsonify({"message":f"book with id {id} deleted."}),200
 
